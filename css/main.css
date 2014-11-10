@@ -9,6 +9,7 @@
 body {
   margin: 0;
   padding: 0;
+  color: #333;
 }
 
 body, button {
@@ -42,6 +43,7 @@ code {
   padding: 40px 10px 10px 10px;
   transform: translateY(60px);
   transition: transform ease-in-out 0.2s;
+  text-align: center;
 }
 
 .controls:hover {
@@ -49,15 +51,16 @@ code {
 }
 
 .controls button {
+  font-size: 40%;
+  vertical-align: middle;
   border: 0;
   background: rgba(0, 0, 0, 0.5);
   color: white;
-  font-size: 40%;
   border-radius: 1em;
   padding: 0 1em;
   line-height: 2em;
   cursor: pointer;
-  margin-right: 5px;
+  margin: 0 5px;
 }
 
 .controls button:focus {
