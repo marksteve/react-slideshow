@@ -136,21 +136,21 @@ var ReactSlideshow = React.createClass({
   }
 });
 
-var auth = firebase.getAuth();
-
-if (auth) {
-  console.log("Logged in as", auth);
-  init(auth);
-} else {
-  firebase.authWithOAuthPopup(
-    'github',
-    function(error) {
-      if (error) {
-        alert(error);
+firebase.onAuth(function(auth) {
+  if (auth) {
+    console.log("Logged in as", auth);
+    init(auth);
+  } else {
+    firebase.authWithOAuthPopup(
+      'github',
+      function(error) {
+        if (error) {
+          alert(error);
+        }
       }
-    }
-  );
-}
+    );
+  }
+});
 
 function init(auth) {
   React.render(
