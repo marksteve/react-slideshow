@@ -1,0 +1,20 @@
+{
+  "name": "react-slideshow",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "reactify": "~0.15.2",
+    "react": "~0.12.0",
+    "marked": "~0.3.2",
+    "velocity-animate": "~1.1.0",
+    "Mousetrap": "git://github.com/ccampbell/mousetrap",
+    "firebase": "~2.0.2",
+    "uglifyify": "~2.6.0"
+  }
+}

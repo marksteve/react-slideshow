@@ -1,0 +1,113 @@
+* {
+  box-sizing: border-box;
+  -o-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body, button {
+  font: 40px/1.5 Halant, serif;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: Rohza One, serif;
+}
+
+code {
+  font-family: PT Mono, monospace;
+}
+
+.slide {
+  display: none;
+
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  text-align: center;
+}
+
+.controls {
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  padding: 40px 10px 10px 10px;
+  transform: translateY(60px);
+  transition: transform ease-in-out 0.2s;
+}
+
+.controls:hover {
+  transform: translateY(0);
+}
+
+.controls button {
+  border: 0;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  font-size: 40%;
+  border-radius: 1em;
+  padding: 0 1em;
+  line-height: 2em;
+  cursor: pointer;
+  margin-right: 5px;
+}
+
+.controls button:focus {
+  outline: none;
+}
+
+.spinner-overlay {
+  background: white;
+
+  text-align: center;
+
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  z-index: 10;
+}
+
+.spinner {
+  width: 30px;
+  height: 30px;
+  background-color: #333;
+
+  display: inline-block;
+
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+
+  -webkit-animation: rotateplane 1.2s infinite ease-in-out;
+  animation: rotateplane 1.2s infinite ease-in-out;
+}
+
+@-webkit-keyframes rotateplane {
+  0% { -webkit-transform: perspective(120px) }
+  50% { -webkit-transform: perspective(120px) rotateY(180deg) }
+  100% { -webkit-transform: perspective(120px) rotateY(180deg)  rotateX(180deg) }
+}
+
+@keyframes rotateplane {
+  0% {
+    transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+    -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg)
+  } 50% {
+    transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
+    -webkit-transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg)
+  } 100% {
+    transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+    -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+  }
+}
