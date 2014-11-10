@@ -1,11 +1,11 @@
 window.React = require('react/addons');
 
+var FIREBASE_URL = "https://react-slideshow.firebaseio.com";
+
 require('Mousetrap');
 var Firebase = require('firebase');
 var Slide = require('./slide');
 var Spinner = require('./spinner');
-
-var firebase = new Firebase("https://react-slideshow.firebaseio.com");
 
 var ReactSlideshow = React.createClass({
   getInitialState: function() {
@@ -14,15 +14,16 @@ var ReactSlideshow = React.createClass({
       currentSlide: null
     };
   },
-  componentWillMount: function() {
-    var slideRef = this.props.firebase.child('slides').orderByKey();
+  componentDidMount: function() {
+    this.firebase = new Firebase(FIREBASE_URL);
+
+    var slideRef = this.firebase.child('slides').orderByKey();
     slideRef.on('child_added', this.updateSlide);
     slideRef.on('child_changed', this.updateSlide);
 
-    var currentSlideRef = this.props.firebase.child('currentSlide');
+    var currentSlideRef = this.firebase.child('currentSlide');
     currentSlideRef.on('value', this.updateCurrentSlide);
-  },
-  componentDidMount: function() {
+
     Mousetrap.bind('left', this.prevSlide);
     Mousetrap.bind('right', this.nextSlide);
   },
@@ -94,7 +95,7 @@ var ReactSlideshow = React.createClass({
     var prevIndex = this.currentIndex() - 1;
     var keys = Object.keys(this.state.slides);
     if (prevIndex >= 0) {
-      this.props.firebase.child('currentSlide')
+      this.firebase.child('currentSlide')
         .set(keys[prevIndex]);
     }
   },
@@ -102,20 +103,25 @@ var ReactSlideshow = React.createClass({
     var nextIndex = this.currentIndex() + 1;
     var keys = Object.keys(this.state.slides);
     if (nextIndex < keys.length) {
-      this.props.firebase.child('currentSlide')
+      this.firebase.child('currentSlide')
         .set(keys[nextIndex]);
     }
   },
   addSlide: function() {
-    var newSlide = this.props.firebase.child('slides')
+    var newSlide = this.firebase.child('slides')
       .push({
         title: "Slide title",
         content: "Slide content"
       });
-    this.props.firebase.child('currentSlide')
+    this.firebase.child('currentSlide')
       .set(newSlide.key());
   },
   editSlide: function() {
+  },
+  deleteSlide: function() {
+  },
+  logout: function() {
+    this.firebase.unauth();
   },
   render: function() {
     return (
@@ -124,11 +130,17 @@ var ReactSlideshow = React.createClass({
           {this.renderSlides()}
         </div>
         <div className="controls">
+          <button className="add-slide" onClick={this.addSlide}>
+            New slide
+          </button>
           <button className="edit-slide" onClick={this.editSlide}>
             Edit slide
           </button>
-          <button className="add-slide" onClick={this.addSlide}>
-            New slide
+          <button className="delete-slide" onClick={this.editSlide}>
+            Delete slide
+          </button>
+          <button className="logout" onClick={this.logout}>
+            Logout
           </button>
         </div>
       </div>
@@ -136,11 +148,22 @@ var ReactSlideshow = React.createClass({
   }
 });
 
+function renderSlideshow(auth) {
+  React.render(
+    <ReactSlideshow auth={auth} />,
+    document.getElementById('react-slideshow')
+  );
+}
+
+var firebase = new Firebase(FIREBASE_URL);
 firebase.onAuth(function(auth) {
   if (auth) {
     console.log("Logged in as", auth);
-    init(auth);
+    renderSlideshow(auth);
   } else {
+    React.unmountComponentAtNode(
+      document.getElementById('react-slideshow')
+    );
     firebase.authWithOAuthPopup(
       'github',
       function(error) {
@@ -152,12 +175,3 @@ firebase.onAuth(function(auth) {
   }
 });
 
-function init(auth) {
-  React.render(
-    <ReactSlideshow
-      auth={auth}
-      firebase={firebase}
-    />,
-    document.getElementById('react-slideshow')
-  );
-}
