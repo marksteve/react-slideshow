@@ -6,7 +6,7 @@ var marked = require('marked');
 
 module.exports = React.createClass({
   displayName: 'Slide',
-  componentDidMount: function() {
+  componentDidUpdate: function() {
     var elements = this.getDOMNode().querySelectorAll('code');
     for (var i = 0; i < elements.length; i++) {
       Prism.highlightElement(elements[i]);
