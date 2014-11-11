@@ -110,8 +110,8 @@ var ReactSlideshow = React.createClass({
   addSlide: function() {
     var newSlide = this.firebase.child('slides')
       .push({
-        title: "Slide title",
-        content: "Slide content"
+        title: "Lorem ipsum",
+        content: "##Lorem ipsum\nLorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
       });
     this.firebase.child('currentSlide')
       .set(newSlide.key());
