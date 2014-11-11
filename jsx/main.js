@@ -5,8 +5,9 @@ var FIREBASE_URL = "https://react-slideshow.firebaseio.com";
 require('Mousetrap');
 
 var Firebase = require('firebase');
-var Slide = require('./slide');
-var Spinner = require('./spinner');
+var Slides = require('./slides');
+var Progress = require('./progress');
+var Controls = require('./controls');
 
 var ReactSlideshow = React.createClass({
   getInitialState: function() {
@@ -33,7 +34,7 @@ var ReactSlideshow = React.createClass({
       return;
     }
     if (prevState.currentSlide) {
-      var keys = Object.keys(this.state.slides);
+      var keys = this.slideKeys();
       var transitionIn, transitionOut;
       if (
         keys.indexOf(prevState.currentSlide) >
@@ -46,21 +47,27 @@ var ReactSlideshow = React.createClass({
         transitionOut = 'transition.slideLeftBigOut';
       }
       Velocity(
-        this.refs[prevState.currentSlide].getDOMNode(),
+        this.slideNode(prevState.currentSlide),
         transitionOut,
         {duration: 200}
       );
       Velocity(
-        this.refs[this.state.currentSlide].getDOMNode(),
+        this.slideNode(this.state.currentSlide),
         transitionIn,
         {duration: 200, delay: 100}
       );
     } else {
       Velocity(
-        this.refs[this.state.currentSlide].getDOMNode(),
+        this.slideNode(this.state.currentSlide),
         'transition.fadeIn'
       );
     }
+  },
+  slideNode: function(key) {
+    return this.refs.slides.refs[key].getDOMNode();
+  },
+  slideKeys: function() {
+    return Object.keys(this.state.slides);
   },
   updateSlide: function(data) {
     var newSlides = {};
@@ -79,22 +86,15 @@ var ReactSlideshow = React.createClass({
     });
     console.log("Current slide", this.state.currentSlide);
   },
-  renderSlides: function() {
-    var slides = Object.keys(this.state.slides).map(this.renderSlide);
-    return slides.length > 0 ? slides : <Spinner />;
-  },
-  renderSlide: function(key) {
-    return (
-      <Slide ref={key} key={key} {...this.state.slides[key]} />
-    );
+  currentSlide: function() {
+    return this.state.slides[this.state.currentSlide];
   },
   currentIndex: function() {
-    return Object.keys(this.state.slides)
-      .indexOf(this.state.currentSlide);
+    return this.slideKeys().indexOf(this.state.currentSlide);
   },
   prevSlide: function() {
     var prevIndex = this.currentIndex() - 1;
-    var keys = Object.keys(this.state.slides);
+    var keys = this.slideKeys();
     if (prevIndex >= 0) {
       this.firebase.child('currentSlide')
         .set(keys[prevIndex]);
@@ -102,7 +102,7 @@ var ReactSlideshow = React.createClass({
   },
   nextSlide: function() {
     var nextIndex = this.currentIndex() + 1;
-    var keys = Object.keys(this.state.slides);
+    var keys = this.slideKeys();
     if (nextIndex < keys.length) {
       this.firebase.child('currentSlide')
         .set(keys[nextIndex]);
@@ -127,22 +127,23 @@ var ReactSlideshow = React.createClass({
   render: function() {
     return (
       <div className="screen">
-        <div className="slides">
-          {this.renderSlides()}
-        </div>
-        <div className="controls">
-          <button className="add-slide" onClick={this.addSlide}>
-            New slide
-          </button>
-          <button className="edit-slide" onClick={this.editSlide}>
-            Edit slide
-          </button>
-          <button className="delete-slide" onClick={this.editSlide}>
-            Delete slide
-          </button>
-          <button className="logout" onClick={this.logout}>
-            Logout
-          </button>
+        <Slides ref="slides" slides={this.state.slides} />
+        <Progress
+          current={this.currentIndex() + 1}
+          total={this.slideKeys().length}
+        />
+        <div className="info">
+          {this.currentIndex() + 1}
+          /
+          {this.slideKeys().length}
+          &mdash;
+          {this.currentSlide() ? this.currentSlide().title : ''}
+          <Controls
+            onAddSlide={this.addSlide}
+            onEditSlide={this.editSlide}
+            onDeleteSlide={this.deleteSlide}
+            onLogout={this.logout}
+          />
         </div>
       </div>
     );
