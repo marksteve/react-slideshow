@@ -3,6 +3,8 @@ window.React = require('react/addons');
 var FIREBASE_URL = "https://react-slideshow.firebaseio.com";
 
 require('Mousetrap');
+require('velocity-animate');
+require('velocity-animate/velocity.ui');
 
 var Firebase = require('firebase');
 var Slides = require('./slides');

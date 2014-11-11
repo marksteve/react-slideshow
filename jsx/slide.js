@@ -1,5 +1,3 @@
-require('velocity-animate');
-require('velocity-animate/velocity.ui');
 require('prismjs');
 
 var marked = require('marked');
