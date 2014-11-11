@@ -3,6 +3,7 @@ window.React = require('react/addons');
 var FIREBASE_URL = "https://react-slideshow.firebaseio.com";
 
 require('Mousetrap');
+
 var Firebase = require('firebase');
 var Slide = require('./slide');
 var Spinner = require('./spinner');
