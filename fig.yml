@@ -1,6 +1,0 @@
-jekyll:
-  build: .
-  volumes:
-    - .:/data
-  ports:
-    - 4000:4000
