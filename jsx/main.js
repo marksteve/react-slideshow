@@ -22,11 +22,12 @@ var ReactSlideshow = React.createClass({
     this.firebase = new Firebase(FIREBASE_URL);
 
     var slideRef = this.firebase.child('slides').orderByKey();
-    slideRef.on('child_added', this.updateSlide);
-    slideRef.on('child_changed', this.updateSlide);
+    slideRef.on('child_added', this.updateFirebaseSlide);
+    slideRef.on('child_changed', this.updateFirebaseSlide);
+    slideRef.on('child_removed', this.deleteFirebaseSlide);
 
     var currentSlideRef = this.firebase.child('currentSlide');
-    currentSlideRef.on('value', this.updateCurrentSlide);
+    currentSlideRef.on('value', this.updateFirebaseCurrentSlide);
 
     Mousetrap.bind('left', this.prevSlide);
     Mousetrap.bind('right', this.nextSlide);
@@ -48,11 +49,14 @@ var ReactSlideshow = React.createClass({
         transitionIn = 'transition.slideRightBigIn';
         transitionOut = 'transition.slideLeftBigOut';
       }
-      Velocity(
-        this.slideNode(prevState.currentSlide),
-        transitionOut,
-        {duration: 200}
-      );
+      var prevNode = this.slideNode(prevState.currentSlide);
+      if (prevNode) {
+        Velocity(
+          prevNode,
+          transitionOut,
+          {duration: 200}
+        );
+      }
       Velocity(
         this.slideNode(this.state.currentSlide),
         transitionIn,
@@ -66,12 +70,13 @@ var ReactSlideshow = React.createClass({
     }
   },
   slideNode: function(key) {
-    return this.refs.slides.refs[key].getDOMNode();
+    var slide = this.refs.slides.refs[key]
+    return slide ? slide.getDOMNode() : null;
   },
   slideKeys: function() {
     return Object.keys(this.state.slides);
   },
-  updateSlide: function(data) {
+  updateFirebaseSlide: function(data) {
     var newSlides = {};
     newSlides[data.key()] = {$set: data.val()};
     this.setState(
@@ -82,7 +87,23 @@ var ReactSlideshow = React.createClass({
     );
     console.log("Loaded slide", data.key());
   },
-  updateCurrentSlide: function(data) {
+  deleteFirebaseSlide: function(data) {
+    var newSlides = {
+      $apply: function(slides) {
+        delete slides[data.key()];
+        return slides;
+      }
+    };
+    this.setState(
+      React.addons.update(
+        this.state,
+        {slides: newSlides}
+      )
+    );
+
+    this.prevSlide();
+  },
+  updateFirebaseCurrentSlide: function(data) {
     this.setState({
       currentSlide: data.val()
     });
@@ -122,6 +143,8 @@ var ReactSlideshow = React.createClass({
   editSlide: function() {
   },
   deleteSlide: function() {
+    this.firebase.child('slides')
+      .child(this.state.currentSlide).remove();
   },
   logout: function() {
     this.firebase.unauth();
