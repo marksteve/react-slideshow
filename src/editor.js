@@ -1,3 +1,5 @@
+var Behave = require('./behave');
+
 module.exports = React.createClass({
   displayName: 'Editor',
   componentDidUpdate: function(nextProps) {
@@ -11,6 +13,8 @@ module.exports = React.createClass({
         {duration: 200}
       );
       this.refs.content.getDOMNode().focus();
+      new Behave({textarea: this.refs.content.getDOMNode()});
+      new Behave({textarea: this.refs.css.getDOMNode()});
     }
   },
   onChange: function() {
@@ -18,7 +22,8 @@ module.exports = React.createClass({
       .child(this.props.slideKey)
       .set({
         title: this.refs.title.getDOMNode().value,
-        content: this.refs.content.getDOMNode().value
+        content: this.refs.content.getDOMNode().value,
+        css: this.refs.css.getDOMNode().value
       });
   },
   render: function() {
@@ -30,11 +35,20 @@ module.exports = React.createClass({
           defaultValue={this.props.slide.title}
           onChange={this.onChange}
         />
-        <textarea
-          ref="content"
-          defaultValue={this.props.slide.content}
-          onChange={this.onChange}
-        />
+        <div className="editor-content">
+          <textarea
+            ref="content"
+            defaultValue={this.props.slide.content}
+            onChange={this.onChange}
+          />
+        </div>
+        <div className="editor-css">
+          <textarea
+            ref="css"
+            defaultValue={this.props.slide.css}
+            onChange={this.onChange}
+          />
+        </div>
         <div className="exit-edit">
           <button
             onClick={this.props.onExit}

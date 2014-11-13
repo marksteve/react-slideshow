@@ -5,7 +5,11 @@ module.exports = React.createClass({
   displayName: 'Slides',
   renderSlide: function(key) {
     return (
-      <Slide ref={key} key={key} {...this.props.slides[key]} />
+      <Slide
+        ref={key}
+        key={key}
+        {...this.props.slides[key]}
+      />
     );
   },
   render: function() {

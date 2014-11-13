@@ -91,13 +91,30 @@ button:focus {
 }
 
 .editor textarea {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  padding: 1em;
+}
+
+.editor-content,
+.editor-css {
   display: block;
   position: absolute;
   top: 64px;
   bottom: 5em;
-  width: 100%;
-  padding: 0 5em;
   overflow-y: auto;
+}
+
+.editor-content {
+  left: 5em;
+  right: 50%;
+}
+
+.editor-css {
+  right: 5em;
+  left: 50%;
 }
 
 .exit-edit {
