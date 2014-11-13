@@ -13,7 +13,7 @@ body {
 }
 
 body, button {
-  font: 40px/1.5 Halant, serif;
+  font: 40px/1.5 Karla, serif;
 }
 
 a {
@@ -21,11 +21,11 @@ a {
 }
 
 h1, h2, h3, h4, h5 {
-  font-family: Rohza One, serif;
+  font-family: Raleway, serif;
 }
 
 code {
-  font-family: PT Mono, monospace !important;
+  font-family: Inconsolata, monospace !important;
   font-size: 80%;
 }
 

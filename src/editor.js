@@ -1,5 +1,3 @@
-var Behave = require('./behave');
-
 module.exports = React.createClass({
   displayName: 'Editor',
   componentDidUpdate: function(nextProps) {
@@ -13,8 +11,6 @@ module.exports = React.createClass({
         {duration: 200}
       );
       this.refs.content.getDOMNode().focus();
-      new Behave({textarea: this.refs.content.getDOMNode()});
-      new Behave({textarea: this.refs.css.getDOMNode()});
     }
   },
   onChange: function() {
