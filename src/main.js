@@ -41,34 +41,25 @@ var ReactSlideshow = React.createClass({
     }
     if (prevState.currentSlide) {
       var keys = this.slideKeys();
-      var transitionIn, transitionOut;
+      var transitionIn;
       if (
         keys.indexOf(prevState.currentSlide) >
         keys.indexOf(this.state.currentSlide)
       ) {
         transitionIn = 'transition.slideLeftBigIn';
-        transitionOut = 'transition.slideRightBigOut';
       } else {
         transitionIn = 'transition.slideRightBigIn';
-        transitionOut = 'transition.slideLeftBigOut';
-      }
-      var prevNode = this.slideNode(prevState.currentSlide);
-      if (prevNode) {
-        Velocity(
-          prevNode,
-          transitionOut,
-          {duration: 200}
-        );
       }
       Velocity(
         this.slideNode(this.state.currentSlide),
         transitionIn,
-        {duration: 200, delay: 100}
+        {duration: 200}
       );
     } else {
       Velocity(
         this.slideNode(this.state.currentSlide),
-        'transition.fadeIn'
+        'transition.fadeIn',
+        {duration: 200}
       );
     }
   },
@@ -122,27 +113,54 @@ var ReactSlideshow = React.createClass({
     var prevIndex = this.currentIndex() - 1;
     var keys = this.slideKeys();
     if (prevIndex >= 0) {
-      this.firebase.child('currentSlide')
-        .set(keys[prevIndex]);
+      Velocity(
+        this.slideNode(this.state.currentSlide),
+        'transition.slideRightBigOut',
+        {
+          duration: 200,
+          complete: (function() {
+            this.firebase.child('currentSlide')
+              .set(keys[prevIndex]);
+          }).bind(this)
+        }
+      );
     }
   },
   nextSlide: function() {
     var nextIndex = this.currentIndex() + 1;
     var keys = this.slideKeys();
     if (nextIndex < keys.length) {
-      this.firebase.child('currentSlide')
-        .set(keys[nextIndex]);
+      Velocity(
+        this.slideNode(this.state.currentSlide),
+        'transition.slideLeftBigOut',
+        {
+          duration: 200,
+          complete: (function() {
+            this.firebase.child('currentSlide')
+              .set(keys[nextIndex]);
+          }).bind(this)
+        }
+      );
     }
   },
   addSlide: function() {
-    var newSlide = this.firebase.child('slides')
-      .push({
-        title: "Lorem ipsum",
-        content: "##Lorem ipsum\nLorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-        css: ""
-      });
-    this.firebase.child('currentSlide')
-      .set(newSlide.key());
+    Velocity(
+      this.slideNode(this.state.currentSlide),
+      'transition.fadeOut',
+      {
+        duration: 200,
+        complete: (function() {
+          var newSlide = this.firebase.child('slides')
+            .push({
+              title: "Lorem ipsum",
+              content: "##Lorem ipsum\nLorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+              css: ""
+            });
+          this.firebase.child('currentSlide')
+            .set(newSlide.key());
+        }).bind(this)
+      }
+    );
   },
   editSlide: function() {
     this.setState({

@@ -196,6 +196,6 @@ button:focus {
   position: fixed;
   bottom: 0;
   height: 10px;
-  background-color: #eee;
+  background-color: rgba(128, 128, 128, 0.2);
   transition: width 0.2s ease-in-out;
 }
