@@ -16,6 +16,10 @@ body, button {
   font: 40px/1.5 Halant, serif;
 }
 
+a {
+  color: dodgerblue;
+}
+
 h1, h2, h3, h4, h5 {
   font-family: Rohza One, serif;
 }
@@ -23,6 +27,23 @@ h1, h2, h3, h4, h5 {
 code {
   font-family: PT Mono, monospace !important;
   font-size: 80%;
+}
+
+button {
+  font-size: 40%;
+  vertical-align: middle;
+  border: 0;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border-radius: 1em;
+  padding: 0 1em;
+  line-height: 2em;
+  cursor: pointer;
+  margin: 0 5px;
+}
+
+button:focus {
+  outline: none;
 }
 
 .slide {
@@ -39,12 +60,63 @@ code {
   text-align: center;
 }
 
+.editor {
+  font-size: 16px;
+  font-family: PT Mono, monospace !important;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(255, 255, 255, 0.9);
+  z-index: 1000;
+}
+
+.editor input, .editor textarea {
+  background: transparent;
+  border: 0;
+}
+
+.editor input:focus,
+.editor textarea:focus {
+  outline: none;
+}
+
+.editor input {
+  line-height: 64px;
+  height: 64px;
+  font-size: 32px;
+  text-align: center;
+  width: 100%;
+}
+
+.editor textarea {
+  display: block;
+  position: absolute;
+  top: 64px;
+  bottom: 5em;
+  width: 100%;
+  padding: 0 5em;
+  overflow-y: auto;
+}
+
+.exit-edit {
+  position: absolute;
+  bottom: 10px;
+  right: 20px;
+  line-height: 60px;
+}
+
+.exit-edit button {
+  font-size: 100%;
+}
+
 .info {
   position: fixed;
   width: 100%;
   bottom: 0;
   padding: 40px 20px 10px 20px;
-  transform: translateY(60px);
+  transform: translateY(70px);
   transition: transform ease-in-out 0.2s;
   z-index: 20;
 }
@@ -56,23 +128,6 @@ code {
 .controls {
   text-align: right;
   float: right;
-}
-
-.controls button {
-  font-size: 40%;
-  vertical-align: middle;
-  border: 0;
-  background: rgba(0, 0, 0, 0.5);
-  color: white;
-  border-radius: 1em;
-  padding: 0 1em;
-  line-height: 2em;
-  cursor: pointer;
-  margin: 0 5px;
-}
-
-.controls button:focus {
-  outline: none;
 }
 
 .spinner-overlay {

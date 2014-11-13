@@ -8,6 +8,7 @@ require('velocity-animate/velocity.ui');
 
 var Firebase = require('firebase');
 var Slides = require('./slides');
+var Editor = require('./editor');
 var Progress = require('./progress');
 var Controls = require('./controls');
 
@@ -15,7 +16,8 @@ var ReactSlideshow = React.createClass({
   getInitialState: function() {
     return {
       slides: {},
-      currentSlide: null
+      currentSlide: null,
+      editMode: false
     };
   },
   componentDidMount: function() {
@@ -31,6 +33,7 @@ var ReactSlideshow = React.createClass({
 
     Mousetrap.bind('left', this.prevSlide);
     Mousetrap.bind('right', this.nextSlide);
+    Mousetrap.bind('esc', this.exitEditMode);
   },
   componentDidUpdate: function(prevProps, prevState) {
     if (prevState.currentSlide == this.state.currentSlide) {
@@ -141,6 +144,14 @@ var ReactSlideshow = React.createClass({
       .set(newSlide.key());
   },
   editSlide: function() {
+    this.setState({
+      editMode: true
+    });
+  },
+  exitEditMode: function() {
+    this.setState({
+      editMode: false
+    });
   },
   deleteSlide: function() {
     this.firebase.child('slides')
@@ -153,6 +164,13 @@ var ReactSlideshow = React.createClass({
     return (
       <div className="screen">
         <Slides ref="slides" slides={this.state.slides} />
+        <Editor
+          enabled={this.state.editMode}
+          slide={this.currentSlide()}
+          slideKey={this.state.currentSlide}
+          firebase={this.firebase}
+          onExit={this.exitEditMode}
+        />
         <Progress
           current={this.currentIndex() + 1}
           total={this.slideKeys().length}
