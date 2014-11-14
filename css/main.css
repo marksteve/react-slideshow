@@ -26,7 +26,10 @@ h1, h2, h3, h4, h5 {
 
 code {
   font-family: Inconsolata, monospace !important;
-  font-size: 80%;
+}
+
+pre {
+  font-size: 50%;
 }
 
 button {
