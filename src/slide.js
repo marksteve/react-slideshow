@@ -1,4 +1,5 @@
 require('prismjs');
+require('prismjs/components/prism-bash');
 
 var marked = require('marked');
 
