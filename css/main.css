@@ -26,6 +26,15 @@ h1, h2, h3, h4, h5 {
 
 code {
   font-family: Inconsolata, monospace !important;
+  background-color: #ffe;
+  padding: 0 0.3em;
+  border-radius: 0.5em;
+}
+
+pre code {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
 }
 
 pre {
