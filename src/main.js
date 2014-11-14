@@ -17,6 +17,7 @@ var ReactSlideshow = React.createClass({
     return {
       slides: {},
       currentSlide: null,
+      css: null,
       editMode: false
     };
   },
@@ -36,30 +37,40 @@ var ReactSlideshow = React.createClass({
     Mousetrap.bind('esc', this.exitEditMode);
   },
   componentDidUpdate: function(prevProps, prevState) {
-    if (prevState.currentSlide == this.state.currentSlide) {
+if (prevState.currentSlide == this.state.currentSlide) {
       return;
     }
     if (prevState.currentSlide) {
       var keys = this.slideKeys();
-      var transitionIn;
+      var transitionIn, transitionOut;
       if (
         keys.indexOf(prevState.currentSlide) >
         keys.indexOf(this.state.currentSlide)
       ) {
         transitionIn = 'transition.slideLeftBigIn';
+        transitionOut = 'transition.slideRightBigOut';
       } else {
         transitionIn = 'transition.slideRightBigIn';
+        transitionOut = 'transition.slideLeftBigOut';
+      }
+      var prevNode = this.slideNode(prevState.currentSlide);
+      if (prevNode) {
+        Velocity(
+          prevNode,
+          transitionOut,
+          {duration: 200, complete: this.setSlideCSS}
+        );
       }
       Velocity(
         this.slideNode(this.state.currentSlide),
         transitionIn,
-        {duration: 200}
+        {duration: 200, delay: 200}
       );
     } else {
+      this.setSlideCSS();
       Velocity(
         this.slideNode(this.state.currentSlide),
-        'transition.fadeIn',
-        {duration: 200}
+        'transition.fadeIn'
       );
     }
   },
@@ -103,6 +114,11 @@ var ReactSlideshow = React.createClass({
     });
     console.log("Current slide", this.state.currentSlide);
   },
+  setSlideCSS: function() {
+    this.setState({
+      css: this.currentSlide().css
+    });
+  },
   currentSlide: function() {
     return this.state.slides[this.state.currentSlide];
   },
@@ -113,54 +129,27 @@ var ReactSlideshow = React.createClass({
     var prevIndex = this.currentIndex() - 1;
     var keys = this.slideKeys();
     if (prevIndex >= 0) {
-      Velocity(
-        this.slideNode(this.state.currentSlide),
-        'transition.slideRightBigOut',
-        {
-          duration: 200,
-          complete: (function() {
-            this.firebase.child('currentSlide')
-              .set(keys[prevIndex]);
-          }).bind(this)
-        }
-      );
+      this.firebase.child('currentSlide')
+        .set(keys[prevIndex]);
     }
   },
   nextSlide: function() {
     var nextIndex = this.currentIndex() + 1;
     var keys = this.slideKeys();
     if (nextIndex < keys.length) {
-      Velocity(
-        this.slideNode(this.state.currentSlide),
-        'transition.slideLeftBigOut',
-        {
-          duration: 200,
-          complete: (function() {
-            this.firebase.child('currentSlide')
-              .set(keys[nextIndex]);
-          }).bind(this)
-        }
-      );
+      this.firebase.child('currentSlide')
+        .set(keys[nextIndex]);
     }
   },
   addSlide: function() {
-    Velocity(
-      this.slideNode(this.state.currentSlide),
-      'transition.fadeOut',
-      {
-        duration: 200,
-        complete: (function() {
-          var newSlide = this.firebase.child('slides')
-            .push({
-              title: "Lorem ipsum",
-              content: "##Lorem ipsum\nLorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-              css: ""
-            });
-          this.firebase.child('currentSlide')
-            .set(newSlide.key());
-        }).bind(this)
-      }
-    );
+    var newSlide = this.firebase.child('slides')
+      .push({
+        title: "Lorem ipsum",
+        content: "##Lorem ipsum\nLorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        css: ""
+      });
+    this.firebase.child('currentSlide')
+      .set(newSlide.key());
   },
   editSlide: function() {
     this.setState({
@@ -182,7 +171,7 @@ var ReactSlideshow = React.createClass({
   render: function() {
     return (
       <div className="screen">
-        <style>{this.currentSlide() ? this.currentSlide().css : ''}</style>
+        <style>{this.state.css}</style>
         <Slides ref="slides" slides={this.state.slides} />
         <Editor
           enabled={this.state.editMode}
