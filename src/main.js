@@ -37,7 +37,8 @@ var ReactSlideshow = React.createClass({
     Mousetrap.bind('esc', this.exitEditMode);
   },
   componentDidUpdate: function(prevProps, prevState) {
-if (prevState.currentSlide == this.state.currentSlide) {
+    if (prevState.currentSlide == this.state.currentSlide) {
+      this.setSlideCSS();
       return;
     }
     if (prevState.currentSlide) {
@@ -115,9 +116,12 @@ if (prevState.currentSlide == this.state.currentSlide) {
     console.log("Current slide", this.state.currentSlide);
   },
   setSlideCSS: function() {
-    this.setState({
-      css: this.currentSlide().css
-    });
+    var newCSS = this.currentSlide().css;
+    if (newCSS != this.state.css) {
+      this.setState({
+        css: this.currentSlide().css
+      });
+    }
   },
   currentSlide: function() {
     return this.state.slides[this.state.currentSlide];
